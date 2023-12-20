@@ -25,7 +25,6 @@ class Game:
             print(self.guess[i], end="")
 
         print()
-            
 
     def game(self):
         while not self.isGameOver:
@@ -40,7 +39,6 @@ class Game:
                     print(self.guess[i], end="")
             
                 print()
-
             else: 
                 self.score -= 20
                 self.lives -= 1
