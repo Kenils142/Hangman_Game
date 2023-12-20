@@ -2,7 +2,7 @@ from random import choice
 
 class Game:
     words = ['cat', 'dog', 'bear', 'elephant', 'eagle', 'owl', 'parrot', 'penguin', 'snake', 'lizard', 'crocodile', 'turtle', 'frog', 'toad', 'salamander', 'newt', 'shark', 'dolphin', 'salmon', 'goldfish', 'ant', 'bee', 'butterfly', 'spider', 'koala', 'kiwi', 'ostrich', 'anaconda', 'komodo dragon', 'chameleon', 'gecko', 'axolotls', 'uakaris', 'caecilian', 'anglerfish', 'seahorse', 'lungfish', 'seahorse']
-    word = user_guessed = []
+    word = guess = []
     lives = 10
     score = 0
     isGameOver = False
@@ -13,16 +13,16 @@ class Game:
 
     def setNew(self):
         self.word = list(choice(self.words))
-        self.user_guessed = []
+        self.guess = []
 
         for c in self.word:
             if c != " ":
-                self.user_guessed.append("_")
+                self.guess.append("_")
             else:
-                self.user_guessed.append(" ")
+                self.guess.append(" ")
         
-        for i in range(len(self.user_guessed)):
-            print(self.user_guessed[i], end="")
+        for i in range(len(self.guess)):
+            print(self.guess[i], end="")
 
         print()
             
@@ -32,12 +32,12 @@ class Game:
             guess = input()
             if guess in self.word:
                 for i in range(len(self.word)):
-                    if(self.word[i] == guess and self.word[i] != self.user_guessed[i]):
-                        self.user_guessed[i] = guess
+                    if(self.word[i] == guess and self.word[i] != self.guess[i]):
+                        self.guess[i] = guess
                         self.score += 10
                 
-                for i in range(len(self.user_guessed)):
-                    print(self.user_guessed[i], end="")
+                for i in range(len(self.guess)):
+                    print(self.guess[i], end="")
             
                 print()
 
@@ -45,7 +45,7 @@ class Game:
                 self.score -= 20
                 self.lives -= 1
             
-            if self.word == self.user_guessed:
+            if self.word == self.guess:
                 self.score += 100
                 self.setNew()
 
