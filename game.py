@@ -1,56 +1,70 @@
 from random import choice
+from pynput import keyboard
 
-class Game:
-    words = ['cat', 'dog', 'bear', 'elephant', 'eagle', 'owl', 'parrot', 'penguin', 'snake', 'lizard', 'crocodile', 'turtle', 'frog', 'toad', 'salamander', 'newt', 'shark', 'dolphin', 'salmon', 'goldfish', 'ant', 'bee', 'butterfly', 'spider', 'koala', 'kiwi', 'ostrich', 'anaconda', 'komodo dragon', 'chameleon', 'gecko', 'axolotls', 'uakaris', 'caecilian', 'anglerfish', 'seahorse', 'lungfish', 'seahorse']
-    word = guess = []
-    lives = 10
+key_pressed = None
+
+#Function for selecting random word
+def selector():
+    words = ['cat', 'dog', 'bear', 'elephant', 'eagle', 'owl', 'parrot', 'penguin', 'snake', 'lizard', 'crocodile', 'turtle', 'frog', 'toad', 'salamander', 'newt', 'shark', 'dolphin', 'salmon', 'goldfish', 'ant', 'bee', 'butterfly', 'spider', 'koala', 'kiwi', 'ostrich', 'anaconda', 'komodo dragon', 'chameleon', 'gecko', 'axolotl', 'uakari', 'caecilian', 'anglerfish', 'lungfish', 'seahorse']
+    
+    return choice(words)
+
+#Event Handler for key presses
+def on_key_press(key):
+    if hasattr(key, 'char'):
+        if key.char.isalpha():
+            global key_pressed
+            key_pressed = key.char
+            return False
+
+def game():
+    word = selector()
+    guessed = set()
+    guessed.add(" ")
     score = 0
-    isGameOver = False
+    life = 10
 
-    def __init__(self):
-        self.setNew()
-        self.game()
-
-    def setNew(self):
-        self.word = list(choice(self.words))
-        self.guess = []
-
-        for c in self.word:
-            if c != " ":
-                self.guess.append("_")
+    while(True):
+        #For testing purposes / comment out when gui developed 
+        for i in word:
+            if i in guessed :
+                print(i, end="")
             else:
-                self.guess.append(" ")
-        
-        for i in range(len(self.guess)):
-            print(self.guess[i], end="")
+                print("_", end="")
+        print(f'   score:{score} lives:{life}')
 
-        print()
+        with keyboard.Listener(on_press=on_key_press) as Listener:
+            Listener.join()
+    
+        #If letter is already guessed ignore checking again
+        if key_pressed not in guessed:
+            #checking if gussed letter is in word
+            if key_pressed in word:
+                guessed.add(key_pressed)
+                score += 10
 
-    def game(self):
-        while not self.isGameOver:
-            guess = input()
-            if guess in self.word:
-                for i in range(len(self.word)):
-                    if(self.word[i] == guess and self.word[i] != self.guess[i]):
-                        self.guess[i] = guess
-                        self.score += 10
-                
-                for i in range(len(self.guess)):
-                    print(self.guess[i], end="")
-            
-                print()
-            else: 
-                self.score -= 20
-                self.lives -= 1
-            
-            if self.word == self.guess:
-                self.score += 100
-                self.setNew()
+                #If word gussed, create new word to guess
+                if set(word) <= guessed:
+                    print("Sucess")
+                    score += 100
+                    for i in word:
+                        if i in guessed :
+                            print(i, end="")
+                        else:
+                            print("_", end="")
+                    print(f'   score:{score} lives:{life}')
+                    word = selector()
+                    guessed = set()
 
-            if(self.lives == 0):
-                self.isGameOver = True
-                print(self.score)
-                
+            #If guess was incorrect
+            else:
+                score -= 20
+                life -= 1
+
+                #if out of lives
+                if life == 0:
+                    print(f'Game Over, Your score is {score}')
+                    break
 
 if __name__ == "__main__":
-    game_instance = Game()
+    game()

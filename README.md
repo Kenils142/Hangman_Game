@@ -1,0 +1,1 @@
+Game.py is responsible for game logic for a hangman game. 
