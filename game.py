@@ -1,7 +1,4 @@
 from random import choice
-from pynput import keyboard
-
-key_pressed = None
 
 #Function for selecting random word
 def selector():
@@ -9,13 +6,14 @@ def selector():
     
     return choice(words)
 
-#Event Handler for key presses
-def on_key_press(key):
-    if hasattr(key, 'char'):
-        if key.char.isalpha():
-            global key_pressed
-            key_pressed = key.char
-            return False
+def display(word, guessed, score, life):
+    #displaying what letters in words left to be guessed
+    for i in word:
+        if i in guessed :
+            print(i, end="")
+        else:
+            print("_", end="")
+    print(f'   score:{score} lives:{life}')
 
 def game():
     word = selector()
@@ -23,48 +21,44 @@ def game():
     guessed.add(" ")
     score = 0
     life = 10
+    isGameOver = False
 
-    while(True):
-        #For testing purposes / comment out when gui developed 
-        for i in word:
-            if i in guessed :
-                print(i, end="")
-            else:
-                print("_", end="")
-        print(f'   score:{score} lives:{life}')
+    while not isGameOver:
 
-        with keyboard.Listener(on_press=on_key_press) as Listener:
-            Listener.join()
-    
-        #If letter is already guessed ignore checking again
-        if key_pressed not in guessed:
-            #checking if gussed letter is in word
-            if key_pressed in word:
-                guessed.add(key_pressed)
-                score += 10
+        display(word, guessed, score, life)
 
-                #If word gussed, create new word to guess
-                if set(word) <= guessed:
-                    print("Sucess")
-                    score += 100
-                    for i in word:
-                        if i in guessed :
-                            print(i, end="")
-                        else:
-                            print("_", end="")
-                    print(f'   score:{score} lives:{life}')
-                    word = selector()
-                    guessed = set()
+        inp = set(input("Enter Letter of word:"))
 
-            #If guess was incorrect
-            else:
-                score -= 20
-                life -= 1
+        #check for all unique characters entered dy user
+        for i in inp:
 
-                #if out of lives
-                if life == 0:
-                    print(f'Game Over, Your score is {score}')
-                    break
+            #If letter is already guessed ignore checking again
+            if i not in guessed:
+
+                #checking if guessed letter is in word
+                if i in word:
+                    guessed.add(i)
+                    score += 10
+
+                    #If word gussed, create new word to guess
+                    if set(word) <= guessed:
+                        print("Sucess")
+                        score += 100
+                        display(word, guessed, score, life)
+                        word = selector()
+                        guessed = set()
+                        del inp
+
+                #If guess was incorrect
+                else:
+                    score -= 20
+                    life -= 1
+
+                    #if out of lives
+                    if life == 0:
+                        print(f'Game Over, Your score is {score}')
+                        isGameOver = True
+                        break                       
 
 if __name__ == "__main__":
     game()
